@@ -1,0 +1,1 @@
+cc -o test test.c -L. -I. -lglut -lGL -lGLU -lXi -lXrandr -lm 
