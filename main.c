@@ -31,9 +31,9 @@ void init( void ){
 void display( void ){
 	
 	glClear(GL_COLOR_BUFFER_BIT);
-	DrawTexture( &tunnel, 0, 0, 417, 95 );
-	DrawTexture( &rail, 0, 0, 417, 95 );
-	DrawTexture( &train, 0, 24, 412, 49 );
+	DrawTexture( &tunnel, 0, 0, BG_WIDTH, BG_HEIGHT );
+	DrawTexture( &rail, 0, 0, BG_WIDTH, BG_HEIGHT );
+	DrawTexture( &train, 0, RAIL_Y - TRAIN_HEIGHT, TRAIN_WIDTH, TRAIN_HEIGHT );
 	glutSwapBuffers();
 }
 
