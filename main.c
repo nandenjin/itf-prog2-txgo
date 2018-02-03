@@ -3,11 +3,15 @@
 #include "GL/glut.h"
 
 #include "ImageUtil.h"
+#include "Track.h"
 
 #include "main.h"
 
 // テクスチャ画像
-Texture train, rail, tunnel;
+Texture train, rail, scenes[2];
+
+// 走行位置
+int trainPosition = 0;
 
 void init( void ){
 	
@@ -21,9 +25,13 @@ void init( void ){
 	glOrtho( 0, WIN_WIDTH, WIN_HEIGHT, 0, -1, 1 );
 	
 	// テクスチャ画像のロード
-	GetTextureByPNGImage( &tunnel, "./assets/tunnel.png" );
+	GetTextureByPNGImage( &scenes[0], "./assets/tunnel.png" );
+	GetTextureByPNGImage( &scenes[1], "./assets/station.png" );
 	GetTextureByPNGImage( &train, "./assets/train.png" );
 	GetTextureByPNGImage( &rail, "./assets/rail.png" );
+	
+	// 路線の初期化
+	initTrack();
 
 }
 
@@ -31,15 +39,40 @@ void init( void ){
 void display( void ){
 	
 	glClear(GL_COLOR_BUFFER_BIT);
-	DrawTexture( &tunnel, 0, 0, BG_WIDTH, BG_HEIGHT );
-	DrawTexture( &rail, 0, 0, BG_WIDTH, BG_HEIGHT );
-	DrawTexture( &train, 0, RAIL_Y - TRAIN_HEIGHT, TRAIN_WIDTH, TRAIN_HEIGHT );
+	
+	int posOnPx = trainPosition * MP_UNIT;
+	int posOfRE = trainPosition - ( WIN_WIDTH - TRAIN_HEAD_X ) / MP_UNIT;
+  int ib = getSceneIndexByPosition( posOfRE );
+  int pb = WIN_WIDTH + ( posOfRE - track.scenes[ib].beginAt ) * MP_UNIT % BG_WIDTH;
+  
+  while( 0 < pb ){
+    int i = getSceneIndexByPosition( ( WIN_WIDTH - pb ) / MP_UNIT + posOfRE );
+    if( i != ib ){
+      pb = WIN_WIDTH - ( track.scenes[i].beginAt - posOfRE ) * MP_UNIT;
+      ib = i;
+    }
+    int type = track.scenes[i].type;
+    if( pb - BG_WIDTH < WIN_WIDTH ) DrawTexture( &scenes[type], pb - BG_WIDTH, 0, BG_WIDTH, BG_HEIGHT );
+    pb -= BG_WIDTH;
+  }
+	
+	// 軌道の描画
+	int pr = TRAIN_HEAD_X + ( WIN_WIDTH - TRAIN_HEAD_X ) % BG_WIDTH + posOnPx % BG_WIDTH;
+	
+	while( -BG_WIDTH < pr ){
+		if( pr < BG_WIDTH ) DrawTexture( &rail, pr, 0, BG_WIDTH, BG_HEIGHT );
+		pr -= BG_WIDTH;
+	}
+	
+	// 車両の描画
+	DrawTexture( &train, TRAIN_HEAD_X, RAIL_Y - TRAIN_HEIGHT, TRAIN_WIDTH, TRAIN_HEIGHT );
+	
 	glutSwapBuffers();
 }
 
 void onKeyboard( unsigned char key, int x, int y ){
 
-	printf( "%c\n", key );	
+	printf( "%c\n", key );
 	
 }
 
