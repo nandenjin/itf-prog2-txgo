@@ -64,7 +64,7 @@ int isSceneExists( int pos ){
 
 }
 
-void renderTrack( int trainPosition, int width, int train_x, int mp_unit ){
+void renderTrack( double trainPosition, int width, int train_x, int mp_unit ){
 	
 	// シーン背景の描画
 	int posOfRE = trainPosition - ( width - train_x ) / mp_unit;

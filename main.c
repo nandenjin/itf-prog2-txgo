@@ -2,11 +2,22 @@
 #include <stdio.h>
 #include "GL/glut.h"
 
+// タイマーライブラリ
+#include "GenericTimer.h"
+
 #include "main.h"
+#include "drive.h"
 #include "Track.h"
 
 // 走行位置
-int trainPosition = 0;
+double trainPosition = 0;
+
+// 走行速度（km/h）
+double trainSpeed = 0;
+
+// 描画インターバル時刻の記録
+int lastIdleTime = 0;
+
 
 void init( void ){
 	
@@ -22,6 +33,12 @@ void init( void ){
 	// 路線の初期化
 	initTrack();
 	loadTrackAssets();
+	
+	// タイマー開始
+	StartTimer();
+	
+	// 描画インターバル時刻の初期値
+	lastIdleTime = GetTime();
 
 }
 
@@ -36,17 +53,35 @@ void display( void ){
 	glutSwapBuffers();
 }
 
+
+void idle( void ){
+	
+	double t = GetRapTime( lastIdleTime );
+	
+	if( t > 100 ){
+		tickDrive( t, &trainSpeed, &trainPosition );
+		lastIdleTime = GetTime();
+		
+	}
+
+	display();
+
+}
+
+
 void onKeyboard( unsigned char key, int x, int y ){
 
 	printf( "%c\n", key );
 	
 }
 
+
 void onSpecialKey( int key, int x, int y ){
 
 	printf( "%d\n", key );	
 	
 }
+
 
 int main( int argc, char *argv[] ){
 
@@ -56,7 +91,7 @@ int main( int argc, char *argv[] ){
   glutCreateWindow( "TXGO" );
  
   glutDisplayFunc( display );
-  //glutIdleFunc(idle);
+  glutIdleFunc( idle );
   
   glutKeyboardFunc( onKeyboard );
   glutSpecialFunc( onSpecialKey );
