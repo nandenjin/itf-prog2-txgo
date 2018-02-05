@@ -1,5 +1,5 @@
 txgo: ImageUtil.o Track.o GenericTimer.o drive.o main.o
-	cc -o txgo ./lib/libglpng.ICHO.a ImageUtil.o Track.o GenericTimer.o drive.o main.o -L. -I. -lglut -lGL -lGLU -lXi -lXrandr -lm
+	cc -framework GLUT -framework OpenGL -o txgo ./lib/libglpng.MACOSX.a ImageUtil.o Track.o GenericTimer.o drive.o main.o
 
 .c.o: 
 	cc -c $< -I. -Wall
