@@ -33,6 +33,9 @@ void init( void ){
 	// 路線の初期化
 	initTrack();
 	loadTrackAssets();
+
+  // 運転操作系の初期化
+  loadControlsAssets();
 	
 	// タイマー開始
 	StartTimer();
@@ -49,6 +52,9 @@ void display( void ){
 	
 	// 軌道と車両の描画
 	renderTrack( trainPosition, WIN_WIDTH, TRAIN_HEAD_X, MP_UNIT );
+
+  // 操作系の描画
+  renderControls();
 	
 	glutSwapBuffers();
 }
@@ -78,7 +84,15 @@ void onKeyboard( unsigned char key, int x, int y ){
 
 void onSpecialKey( int key, int x, int y ){
 
-	printf( "%d\n", key );	
+	if( key == GLUT_KEY_DOWN ){
+
+    stepDrive( 1 );
+
+  }else if( key == GLUT_KEY_UP ){
+
+    stepDrive( -1 );
+
+  }
 	
 }
 
