@@ -7,4 +7,4 @@
 
 void RenderText( char text[], int x, int y );
 
-#endif __TXTUTL__
+#endif
