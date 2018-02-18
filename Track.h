@@ -1,4 +1,7 @@
 
+#ifndef __TRACK__
+#define __TRACK__
+
 // 車両画像
 #define TRAIN_TEXTURE "./assets/train.png"
 
@@ -51,4 +54,4 @@ int isSceneExists( int pos );
 int getSceneIndexByPosition( int index );
 void renderTrack( double trainPosition, int width, int train_x, int mp_unit );
 
-
+#endif
