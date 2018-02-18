@@ -241,7 +241,7 @@ void startGame( void ){
   trainSpeed = 0;
 
   sectionIndex = 0;
-  
+
   resetDrive();
 
 }
@@ -294,7 +294,9 @@ void onKeyboard( unsigned char key, int x, int y ){
 
     }else if( strlen( rankingName ) < 19 ){
 
-      rankingName[ strlen( rankingName ) ] = key;
+      int len = strlen( rankingName );
+      rankingName[ len ] = key;
+      rankingName[ len + 1 ] = '\0';
 
     }
 
