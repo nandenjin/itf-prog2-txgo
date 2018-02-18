@@ -164,7 +164,8 @@ void display( void ){
   }else if( state == 6 ){
 
     DrawTexture( &cover[4], 0, 0, WIN_WIDTH, WIN_HEIGHT );
-
+    renderRanking();
+    onKeyHandler = toGameOP;
 
   }
 
@@ -238,6 +239,9 @@ void startGame( void ){
 
   trainPosition = 0;
   trainSpeed = 0;
+
+  sectionIndex = 0;
+  
   resetDrive();
 
 }

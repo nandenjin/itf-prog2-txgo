@@ -37,7 +37,7 @@ int isRankedIn( int score ){
 
   loadRanking( ranking, &length );
 
-  if( length == 0 ) return 1;
+  if( length < 10 ) return 1;
 
   for( int i = 0; i < length; i++ ){
 
@@ -110,6 +110,19 @@ void sortRanking( RankNode *ranking, int length ){
 
 void renderRanking( void ){
 
+  RankNode ranking[10];
+  int length;
+  loadRanking( ranking, &length );
 
+  for( int i = 0; i < length; i++ ){
+
+    char d[30];
+    sprintf( d, "%s %ds", ranking[i].name, ranking[i].score );
+
+    if( i < 4 ) RenderText( d, 200, 100 + 40 * i );
+    else if( i < 7 ) RenderText( d, 380, 100 + 40 * ( i - 4 ) );
+    else RenderText( d, 600, 100 + 40 * ( i - 7 ) );
+
+  }
 
 }

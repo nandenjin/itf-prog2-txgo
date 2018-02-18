@@ -1,5 +1,5 @@
-txgo: ImageUtil.o TextUtil.o Track.o map.o GenericTimer.o drive.o main.o
-	cc -framework GLUT -framework OpenGL -o txgo ./lib/libglpng.MACOSX.a ImageUtil.o TextUtil.o Track.o map.o GenericTimer.o drive.o main.o
+txgo: ImageUtil.o TextUtil.o Track.o map.o Ranking.o GenericTimer.o drive.o main.o
+	cc -framework GLUT -framework OpenGL -o txgo ./lib/libglpng.MACOSX.a ImageUtil.o TextUtil.o Track.o map.o Ranking.o GenericTimer.o drive.o main.o
 
 .c.o: 
 	cc -c $< -I. -Wall
