@@ -48,10 +48,11 @@ typedef struct {
 extern Track track;
 
 void initTrack( void );
+Track getTrack( void );
 void loadTrackAssets( void );
 int getSceneIndexByPosition( int pos );
 int isSceneExists( int pos );
-int getSceneIndexByPosition( int index );
+int getSectionIndexByPosition( int index );
 void renderTrack( double trainPosition, int width, int train_x, int mp_unit );
 
 #endif

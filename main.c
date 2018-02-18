@@ -9,6 +9,7 @@
 #include "main.h"
 #include "drive.h"
 #include "Track.h"
+#include "map.h"
 #include "ImageUtil.h"
 #include "TextUtil.h"
 
@@ -49,6 +50,9 @@ void init( void ){
 
   // 運転操作系の初期化
   loadControlsAssets();
+
+  // マップ表示初期化
+  InitMap();
 	
 	// タイマー開始
 	StartTimer();
@@ -83,10 +87,18 @@ void display( void ){
 
   }else if( state == 1 ){
 
-    renderMeters( trainSpeed, getSectionByIndex( sectionIndex ) - trainPosition );
-    DrawTexture( &msg[1], MSG_X, MSG_Y, MSG_WIDTH, MSG_HEIGHT );
+    double distanceLeft = getSectionByIndex( sectionIndex ) - trainPosition;
+    renderMeters( trainSpeed, distanceLeft );
+
+    if( distanceLeft < 30 && distanceLeft >= 2 && trainSpeed == 0 ){
+
+      DrawTexture( &msg[1], MSG_X, MSG_Y, MSG_WIDTH, MSG_HEIGHT );
+
+    }
 
   }
+
+  RenderMap( state, sectionIndex, trainPosition );
 	
 	glutSwapBuffers();
 }
@@ -95,12 +107,39 @@ void display( void ){
 void idle( void ){
 
   double now = GetTime();
+  double distanceLeft = getSectionByIndex( sectionIndex ) - trainPosition;
+  Track track = getTrack();
 
   if( state == 0 ){
 
     if( departureTime < now ) state = 1;
 
   }else if( state == 1 ){
+
+    if( distanceLeft < -2 ){
+
+      printf( "== GAME OVER ==\n" );
+      exit( 0 );
+
+    }
+
+    if( trainSpeed == 0 ){
+
+      if( distanceLeft < 2 ){
+
+        state = 0;
+        departureTime = now + 20000;
+        sectionIndex++;
+
+        if( sectionIndex >= track.sectionNum ){
+
+          state = 2;
+
+        }
+
+      }
+
+    }
 
   }
 	
