@@ -1,6 +1,6 @@
 
 #include "GL/glut.h"
-#include <glpng/glpng.h>
+#include "glpng/glpng.h"
 
 #include "ImageUtil.h"
 
