@@ -1,6 +1,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "GL/glut.h"
 
 // タイマーライブラリ
@@ -10,6 +11,7 @@
 #include "drive.h"
 #include "Track.h"
 #include "map.h"
+#include "Ranking.h"
 #include "ImageUtil.h"
 #include "TextUtil.h"
 
@@ -25,13 +27,30 @@ int lastIdleTime = 0;
 // 運行ステータス
 int state = 0;
 
+// 起点出発時刻
+double startTime = 0;
+
 // 発車時刻
 double departureTime = 0;
+
+// スコアタイム
+int scoreTime = 0;
 
 // セクション
 int sectionIndex = 0;
 
-Texture msg[2];
+// 名前入力
+char rankingName[20];
+
+Texture msg[2], cover[5];
+
+// キー入力ハンドラ
+void ( *onKeyHandler )( void ) = NULL;
+
+void startGame( void );
+void toGameOP( void );
+void joinRanking( void );
+void writeRanking( void );
 
 void init( void ){
 	
@@ -60,16 +79,23 @@ void init( void ){
 	// 描画インターバル時刻の初期値
 	lastIdleTime = GetTime();
 
-  // 初期発車時刻
-  departureTime = GetTime() + 10000;
+  GetTextureByPNGImage( &msg[0], MSG_TIME_LEFT );
+  GetTextureByPNGImage( &msg[1], MSG_CANNOT_STOP_HERE );
 
-  GetTextureByPNGImage( &msg[0], "./assets/msg/msg_time-left.png" );
-  GetTextureByPNGImage( &msg[1], "./assets/msg/msg_cannot-stop-here.png" );
+  GetTextureByPNGImage( &cover[0], COVER_OP );
+  GetTextureByPNGImage( &cover[1], COVER_OVER );
+  GetTextureByPNGImage( &cover[2], COVER_END );
+  GetTextureByPNGImage( &cover[3], COVER_NAME_INPUT );
+  GetTextureByPNGImage( &cover[4], COVER_RANKING );
+
+  toGameOP();
 
 }
 
 
 void display( void ){
+
+  double now = GetTime();
 	
 	glClear(GL_COLOR_BUFFER_BIT);
 	
@@ -82,19 +108,63 @@ void display( void ){
 
     DrawTexture( &msg[0], MSG_X + 150, 150, MSG_WIDTH, MSG_HEIGHT );
     char leftTimeStr[10];
-    sprintf( leftTimeStr, "%2.0lf", ( departureTime - GetTime() ) / 1000 );
+    sprintf( leftTimeStr, "%2.0lf", ( departureTime - now ) / 1000 );
     RenderText( leftTimeStr, MSG_X + 160, 200 );
+
+    renderTime( (int)( now - startTime ) / 1000 );
 
   }else if( state == 1 ){
 
     double distanceLeft = getSectionByIndex( sectionIndex ) - trainPosition;
     renderMeters( trainSpeed, distanceLeft );
+    renderTime( (int)( now - startTime ) / 1000 );
 
     if( distanceLeft < 30 && distanceLeft >= 2 && trainSpeed == 0 ){
 
       DrawTexture( &msg[1], MSG_X, MSG_Y, MSG_WIDTH, MSG_HEIGHT );
 
     }
+
+  // オープニング画面
+  }else if( state == 2 ){
+
+    DrawTexture( &cover[0], 0, 0, WIN_WIDTH, WIN_HEIGHT );
+
+  // ゲームオーバー
+  }else if( state == 3 ){
+
+    DrawTexture( &cover[1], 0, 0, WIN_WIDTH, WIN_HEIGHT );
+
+  // 終了画面
+  }else if( state == 4 ){
+
+    char timeChar[20];
+    sprintf( timeChar, "%2d:%02d", scoreTime / 60, scoreTime % 60 );
+
+    DrawTexture( &cover[2], 0, 0, WIN_WIDTH, WIN_HEIGHT );
+    RenderText( timeChar, 440, 200 );
+
+    if( isRankedIn( scoreTime ) == 1 ){
+
+      onKeyHandler = joinRanking;
+
+    }else{
+
+      onKeyHandler = toGameOP;
+
+    }
+
+  // 名前入力
+  }else if( state == 5 ){
+
+    DrawTexture( &cover[3], 0, 0, WIN_WIDTH, WIN_HEIGHT );
+    RenderText( rankingName, 430, 200 );
+
+  // ランキング表示
+  }else if( state == 6 ){
+
+    DrawTexture( &cover[4], 0, 0, WIN_WIDTH, WIN_HEIGHT );
+
 
   }
 
@@ -119,7 +189,8 @@ void idle( void ){
     if( distanceLeft < -2 ){
 
       printf( "== GAME OVER ==\n" );
-      exit( 0 );
+      state = 3;
+      onKeyHandler = toGameOP;
 
     }
 
@@ -133,7 +204,8 @@ void idle( void ){
 
         if( sectionIndex >= track.sectionNum ){
 
-          state = 2;
+          state = 4;
+          scoreTime = (int)( GetTime() - startTime ) / 1000;
 
         }
 
@@ -156,28 +228,111 @@ void idle( void ){
 
 }
 
+void startGame( void ){
+
+  state = 0;
+
+  // 初期発車時刻
+  departureTime = GetTime() + 10000;
+  startTime = GetTime();
+
+  trainPosition = 0;
+  trainSpeed = 0;
+  resetDrive();
+
+}
+
+void toGameOP( void ){
+
+  state = 2;
+  onKeyHandler = startGame;
+
+}
+
+void joinRanking( void ){
+
+  state = 5;
+  rankingName[0] = '\0';
+
+}
+
+void writeRanking( void ){
+
+  joinToRanking( rankingName, scoreTime );
+  state = 6;
+
+}
 
 void onKeyboard( unsigned char key, int x, int y ){
 
-	printf( "%c\n", key );
+	if( onKeyHandler != NULL ){
 
-  if( key == 'q' ) exit( 0 );
+    void (*k)(void) = onKeyHandler;
+    onKeyHandler = NULL;
+    k();
+
+  }else if( state == 5 ){
+
+
+    // Enter
+    if( (int)key == 13 ){
+
+      writeRanking();
+
+    // Backspace
+    }else if( (int)key == 127 ){
+
+      if( strlen( rankingName ) > 0 ){
+
+        rankingName[ strlen( rankingName ) - 1 ] = '\0';
+
+      }
+
+    }else if( strlen( rankingName ) < 19 ){
+
+      rankingName[ strlen( rankingName ) ] = key;
+
+    }
+
+  }else{
+
+    if( key == 'q' ) exit( 0 );
+
+  }
 	
 }
 
 
 void onSpecialKey( int key, int x, int y ){
 
-	if( key == GLUT_KEY_DOWN ){
+  if( onKeyHandler != NULL ){
 
-    stepDrive( 1 );
+    void (*k)(void) = onKeyHandler;
+    onKeyHandler = NULL;
+    k();
 
-  }else if( key == GLUT_KEY_UP ){
+  }else if( state == 5 ){
 
-    stepDrive( -1 );
 
-  }
-	
+
+  }else{
+
+    int locked;
+    if( state == 1 ) locked = 0;
+    else locked = 1;
+
+  	if( key == GLUT_KEY_DOWN ){
+
+      stepDrive( 1, locked );
+
+    }else if( key == GLUT_KEY_UP ){
+
+      stepDrive( -1, locked );
+
+    }
+  
+	}
+
 }
 
 
