@@ -73,7 +73,7 @@ void loadControlsAssets( void ){
 
 }
 
-void renderControls( void ){
+void renderControls( double speed, double position ){
 
 	DrawTexture( &lvTex[ notch ],
     CTRL_LV_TEXTURE_LEFT,
@@ -81,6 +81,30 @@ void renderControls( void ){
     CTRL_LV_TEXTURE_WIDTH,
     CTRL_LV_TEXTURE_HEIGHT
   );
+
+  glRasterPos2i(
+    CTRL_LV_TEXTURE_LEFT - CTRL_LV_TEXTURE_WIDTH - 70 ,
+    CTRL_LV_TEXTURE_TOP  + 50
+  );
+
+  char speedChar[20];
+  sprintf( speedChar, "%3.0lf km/h", speed );
+
+  for( int i = 0; speedChar[i] != '\0'; i++ ){
+    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, speedChar[i]);
+  }
+
+  glRasterPos2i(
+    CTRL_LV_TEXTURE_LEFT - CTRL_LV_TEXTURE_WIDTH - 70 ,
+    CTRL_LV_TEXTURE_TOP  + 75
+  );
+
+  char positionChar[20];
+  sprintf( positionChar, "%4.0lf m", position );
+
+  for( int i = 0; positionChar[i] != '\0'; i++ ){
+    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, positionChar[i]);
+  }
 
 }
 

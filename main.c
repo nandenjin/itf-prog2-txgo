@@ -55,7 +55,7 @@ void display( void ){
 	renderTrack( trainPosition, WIN_WIDTH, TRAIN_HEAD_X, MP_UNIT );
 
   // 操作系の描画
-  renderControls();
+  renderControls( trainSpeed, trainPosition );
 	
 	glutSwapBuffers();
 }

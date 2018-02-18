@@ -14,4 +14,4 @@
 void tickDrive( double time, double *speed, double *position );
 void stepDrive( int w );
 void loadControlsAssets( void );
-void renderControls( void );
+void renderControls( double speed, double position );
