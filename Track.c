@@ -12,7 +12,7 @@ Texture trainTex, railTex, bgTexs[2];
 
 void initTrack( void ){
 
-	track.sceneNum = 4;
+	track.sceneNum = 5;
 	track.scenes = ( Scene * )malloc( sizeof( Scene ) * track.sceneNum );
 	
 	if( track.scenes == NULL ) exit( EXIT_FAILURE );
@@ -26,15 +26,18 @@ void initTrack( void ){
 	track.scenes[2].beginAt = 500;
 	track.scenes[2].type = 1;
 
-	track.scenes[3].beginAt = 800;
+	track.scenes[3].beginAt = 650;
 	track.scenes[3].type = 0;
+
+  track.scenes[4].beginAt = 1000;
+  track.scenes[4].type = 0;
 
 	track.sectionNum = 1;
 	track.sections = ( int * )malloc( sizeof( int ) * track.sectionNum );
 	
 	if( track.sections == NULL ) exit( EXIT_FAILURE );
 
-	track.sections[0] = 0;
+	track.sections[0] = 640;
 
 }
 
@@ -67,13 +70,19 @@ int isSceneExists( int pos ){
 
 }
 
+int getSectionByIndex( int index ){
+
+  return track.sections[ index ];
+
+}
+
 void renderTrack( double trainPosition, int width, int train_x, int mp_unit ){
 	
 	// シーン背景の描画
 	int posOfRE = trainPosition * mp_unit - ( width - train_x );
   int ib = -1;
   int pb = width;
-  //printf( "%d / ", posOfRE );
+  // printf( "%d / ", posOfRE );
   
   while( -BG_WIDTH < pb ){
     int i = getSceneIndexByPosition( ( ( width - pb ) + posOfRE ) / mp_unit );

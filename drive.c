@@ -4,6 +4,7 @@
 
 #include "drive.h"
 #include "ImageUtil.h"
+#include "TextUtil.h"
 
 int notch = 0;
 double accel[] = {
@@ -28,13 +29,16 @@ void tickDrive( double time, double *speed, double *position ){
 	
 	double a;
 
-  if( notch <= 9 ) a = *speed * accel[ notch ] * 10;
-  else{
+  if( notch <= 9 ){
+    a = *speed * accel[ notch ] * 10;
+    if( a > -0.4 ) a = -0.4;
+  }else{
     a = ( MAX_SPEED - *speed ) * accel[ notch ];
 	  if( a < 0.2 ) a = 0.2;
   }
 
 	*speed += a * ( time / 1000 );
+  if( *speed < 0.5 && notch <= 9 ) *speed = 0;
 
 	*position += *speed * 1000 * ( time / 60 / 60 / 1000 );
 
@@ -73,7 +77,7 @@ void loadControlsAssets( void ){
 
 }
 
-void renderControls( double speed, double position ){
+void renderControls( void ){
 
 	DrawTexture( &lvTex[ notch ],
     CTRL_LV_TEXTURE_LEFT,
@@ -82,29 +86,26 @@ void renderControls( double speed, double position ){
     CTRL_LV_TEXTURE_HEIGHT
   );
 
-  glRasterPos2i(
-    CTRL_LV_TEXTURE_LEFT - CTRL_LV_TEXTURE_WIDTH - 70 ,
-    CTRL_LV_TEXTURE_TOP  + 50
-  );
+}
+
+void renderMeters( double speed, double position ){
 
   char speedChar[20];
   sprintf( speedChar, "%3.0lf km/h", speed );
 
-  for( int i = 0; speedChar[i] != '\0'; i++ ){
-    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, speedChar[i]);
-  }
-
-  glRasterPos2i(
-    CTRL_LV_TEXTURE_LEFT - CTRL_LV_TEXTURE_WIDTH - 70 ,
-    CTRL_LV_TEXTURE_TOP  + 75
+  RenderText(
+    speedChar,
+    CTRL_LV_TEXTURE_LEFT - CTRL_LV_TEXTURE_WIDTH - 70,
+    CTRL_LV_TEXTURE_TOP  + 50
   );
 
   char positionChar[20];
   sprintf( positionChar, "%4.0lf m", position );
 
-  for( int i = 0; positionChar[i] != '\0'; i++ ){
-    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, positionChar[i]);
-  }
+  RenderText(
+    positionChar,
+    CTRL_LV_TEXTURE_LEFT - CTRL_LV_TEXTURE_WIDTH - 70 ,
+    CTRL_LV_TEXTURE_TOP  + 75
+  );
 
 }
-

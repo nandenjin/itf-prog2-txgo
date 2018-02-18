@@ -48,6 +48,7 @@ void initTrack( void );
 void loadTrackAssets( void );
 int getSceneIndexByPosition( int pos );
 int isSceneExists( int pos );
+int getSceneIndexByPosition( int index );
 void renderTrack( double trainPosition, int width, int train_x, int mp_unit );
 
 
