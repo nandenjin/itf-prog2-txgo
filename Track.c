@@ -12,7 +12,7 @@ Texture trainTex, railTex, bgTexs[2];
 
 void initTrack( void ){
 
-	track.sceneNum = 3;
+	track.sceneNum = 4;
 	track.scenes = ( Scene * )malloc( sizeof( Scene ) * track.sceneNum );
 	
 	if( track.scenes == NULL ) exit( EXIT_FAILURE );
@@ -23,8 +23,11 @@ void initTrack( void ){
 	track.scenes[1].beginAt = 5;
 	track.scenes[1].type = 0;
 
-	track.scenes[2].beginAt = 1000;
+	track.scenes[2].beginAt = 500;
 	track.scenes[2].type = 1;
+
+	track.scenes[3].beginAt = 800;
+	track.scenes[3].type = 0;
 
 	track.sectionNum = 1;
 	track.sections = ( int * )malloc( sizeof( int ) * track.sectionNum );
@@ -49,7 +52,7 @@ int getSceneIndexByPosition( int pos ){
 	
 	for( int i = 0; i < track.sceneNum; i++ ){
 	
-		if( ( track.scenes[i].beginAt ) > pos ) return i - 1;
+		if( track.scenes[i].beginAt >= pos ) return i - 1;
 	
 	}
 	
@@ -67,27 +70,35 @@ int isSceneExists( int pos ){
 void renderTrack( double trainPosition, int width, int train_x, int mp_unit ){
 	
 	// シーン背景の描画
-	int posOfRE = trainPosition - ( width - train_x ) / mp_unit;
-  int ib = getSceneIndexByPosition( posOfRE );
-  int pb = width + ( posOfRE - track.scenes[ib].beginAt ) * mp_unit % BG_WIDTH;
+	int posOfRE = trainPosition * mp_unit - ( width - train_x );
+  int ib = -1;
+  int pb = width;
+  printf("%d / ", posOfRE );
   
-  while( 0 < pb ){
-    int i = getSceneIndexByPosition( ( width - pb ) / mp_unit + posOfRE );
+  while( -BG_WIDTH < pb ){
+    int i = getSceneIndexByPosition( ( ( width - pb ) + posOfRE ) / mp_unit );
+    if( i < 0 ) break;
     if( i != ib ){
-      pb = width - ( track.scenes[i].beginAt - posOfRE ) * mp_unit;
+    	int d = track.scenes[i].beginAt * mp_unit - posOfRE;
+      if( d > -BG_WIDTH ) pb = width - d;
+      else pb = width + ( -d ) % BG_WIDTH;
       ib = i;
     }
     int type = track.scenes[i].type;
-    if( pb - BG_WIDTH < width ) DrawTexture( &bgTexs[type], pb - BG_WIDTH, 0, BG_WIDTH, BG_HEIGHT );
+  	
+    if( pb - BG_WIDTH >= -BG_WIDTH ){
+    	DrawTexture( &bgTexs[type], pb - BG_WIDTH, 0, BG_WIDTH, BG_HEIGHT );
+    	printf( "%d + %d ", pb - BG_WIDTH, i );
+    }
     pb -= BG_WIDTH;
   }
+  printf( "\n" );
 	
 	// 軌道の描画
-	int posOnPx = trainPosition * mp_unit;
-	int pr = train_x + ( width - train_x ) % RAIL_WIDTH + posOnPx % RAIL_WIDTH;
+	int pr = width + posOfRE % RAIL_WIDTH + RAIL_WIDTH;
 	
-	while( -RAIL_WIDTH < pr ){
-		if( pr < RAIL_WIDTH ) DrawTexture( &railTex, pr, 0, RAIL_WIDTH, RAIL_HEIGHT );
+	while( 0 < pr ){
+		DrawTexture( &railTex, pr - RAIL_WIDTH, 0, RAIL_WIDTH, RAIL_HEIGHT );
 		pr -= RAIL_WIDTH;
 	}
 	
