@@ -73,7 +73,7 @@ void renderTrack( double trainPosition, int width, int train_x, int mp_unit ){
 	int posOfRE = trainPosition * mp_unit - ( width - train_x );
   int ib = -1;
   int pb = width;
-  printf("%d / ", posOfRE );
+  //printf( "%d / ", posOfRE );
   
   while( -BG_WIDTH < pb ){
     int i = getSceneIndexByPosition( ( ( width - pb ) + posOfRE ) / mp_unit );
@@ -88,11 +88,11 @@ void renderTrack( double trainPosition, int width, int train_x, int mp_unit ){
   	
     if( pb - BG_WIDTH >= -BG_WIDTH ){
     	DrawTexture( &bgTexs[type], pb - BG_WIDTH, 0, BG_WIDTH, BG_HEIGHT );
-    	printf( "%d + %d ", pb - BG_WIDTH, i );
+      // printf( "%d + %d ", pb - BG_WIDTH, i );
     }
     pb -= BG_WIDTH;
   }
-  printf( "\n" );
+  // printf( "\n" );
 	
 	// 軌道の描画
 	int pr = width + posOfRE % RAIL_WIDTH + RAIL_WIDTH;
