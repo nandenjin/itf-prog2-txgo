@@ -12,7 +12,7 @@ Texture trainTex, railTex, bgTexs[2];
 
 void initTrack( void ){
 
-	track.sceneNum = 4;
+	track.sceneNum = 7;
 	track.scenes = ( Scene * )malloc( sizeof( Scene ) * track.sceneNum );
 	
 	if( track.scenes == NULL ) exit( EXIT_FAILURE );
@@ -23,28 +23,28 @@ void initTrack( void ){
 	track.scenes[1].beginAt = 5;
 	track.scenes[1].type = 0;
 
-	track.scenes[2].beginAt = 500;
+	track.scenes[2].beginAt = 2050;
 	track.scenes[2].type = 1;
 
-	track.scenes[3].beginAt = 650;
+	track.scenes[3].beginAt = 2210;
 	track.scenes[3].type = 0;
 
-  /*track.scenes[4].beginAt = 1000;
+  track.scenes[4].beginAt = 3250;
   track.scenes[4].type = 1;
 
-  track.scenes[5].beginAt = 1250;
+  track.scenes[5].beginAt = 3410;
   track.scenes[5].type = 0;
 
-  track.scenes[6].beginAt = 1300;
-  track.scenes[6].type = 0;*/
+  track.scenes[6].beginAt = 3500;
+  track.scenes[6].type = 0;
 
-	track.sectionNum = 1;
+	track.sectionNum = 2;
 	track.sections = ( int * )malloc( sizeof( int ) * track.sectionNum );
 	
 	if( track.sections == NULL ) exit( EXIT_FAILURE );
 
-	track.sections[0] = 5;
-  track.sections[1] = 1240;
+	track.sections[0] = 2200;
+  track.sections[1] = 3400;
 
 }
 

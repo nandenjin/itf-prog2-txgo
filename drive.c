@@ -31,7 +31,7 @@ void tickDrive( double time, double *speed, double *position ){
 
   if( notch <= 9 ){
     a = *speed * accel[ notch ] * 10;
-    if( a > -0.4 ) a = -0.4;
+    if( a > -0.5 ) a = -0.5;
   }else{
     a = ( MAX_SPEED - *speed ) * accel[ notch ];
 	  if( a < 0.2 ) a = 0.2;
