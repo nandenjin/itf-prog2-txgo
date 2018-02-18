@@ -44,12 +44,20 @@ void tickDrive( double time, double *speed, double *position ){
 
 }
 
-void stepDrive( int w ){
+void stepDrive( int w, int locked ){
 
   notch += w;
 
   if( notch >= 13 ) notch = 12;
   else if( notch < 0 ) notch = 0;
+
+  if( locked != 0 && notch > 8 ) notch = 8;
+
+}
+
+void resetDrive( void ){
+
+  notch = 0;
 
 }
 
@@ -108,4 +116,16 @@ void renderMeters( double speed, double position ){
     CTRL_LV_TEXTURE_TOP  + 75
   );
 
+}
+
+void renderTime( int timeSec ){
+
+  char timeChar[20];
+  sprintf( timeChar, "%2d:%02d", timeSec / 60, timeSec % 60 );
+
+  RenderText(
+    timeChar,
+    CTRL_LV_TEXTURE_LEFT - CTRL_LV_TEXTURE_WIDTH - 70 ,
+    CTRL_LV_TEXTURE_TOP  + 100
+  );
 }

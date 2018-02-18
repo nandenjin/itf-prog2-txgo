@@ -12,7 +12,9 @@
 #define CTRL_LV_TEXTURE_HEIGHT 150
 
 void tickDrive( double time, double *speed, double *position );
-void stepDrive( int w );
+void stepDrive( int w, int locked );
+void resetDrive( void );
 void loadControlsAssets( void );
 void renderControls( void );
 void renderMeters( double speed, double position );
+void renderTime( int timeSec );
