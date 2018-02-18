@@ -52,7 +52,7 @@ Track getTrack( void );
 void loadTrackAssets( void );
 int getSceneIndexByPosition( int pos );
 int isSceneExists( int pos );
-int getSectionIndexByPosition( int index );
+int getSectionByIndex( int index );
 void renderTrack( double trainPosition, int width, int train_x, int mp_unit );
 
 #endif

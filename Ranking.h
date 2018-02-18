@@ -16,5 +16,6 @@ typedef struct {
 
 void loadRanking( RankNode *ranking, int *n );
 int isRankedIn( int score );
+void joinToRanking( char *name, int score );
 void sortRanking( RankNode *ranking, int length );
 void renderRanking( void );
