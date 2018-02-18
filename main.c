@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "GL/glut.h"
 
 // タイマーライブラリ
@@ -78,6 +79,8 @@ void idle( void ){
 void onKeyboard( unsigned char key, int x, int y ){
 
 	printf( "%c\n", key );
+
+  if( key == 'q' ) exit( 0 );
 	
 }
 
